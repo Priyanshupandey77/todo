@@ -12,9 +12,9 @@ export default function TodoItem({ todo }) {
     setEditingId,
   } = useTodos();
 
-  if (editingId === todo.id) {
+  if (editingId === todo._id) {
     return (
-      <li className={`todo-item ${editingId === todo.id ? "editing" : ""}`}>
+      <li className={`todo-item ${editingId === todo._id ? "editing" : ""}`}>
         <input
           className="todo-edit-input"
           autoFocus
@@ -39,7 +39,7 @@ export default function TodoItem({ todo }) {
         <input
           type="checkbox"
           checked={todo.completed}
-          onChange={() => toggleTodo(todo.id)}
+          onChange={() => toggleTodo(todo._id)}
         />
         <span className="checkmark"></span>
         <span
@@ -57,7 +57,7 @@ export default function TodoItem({ todo }) {
         <button className="btn-edit" onClick={() => startEditing(todo)}>
           Edit
         </button>
-        <button className="btn-delete" onClick={() => deleteTodo(todo.id)}>
+        <button className="btn-delete" onClick={() => deleteTodo(todo._id)}>
           Delete
         </button>
       </div>

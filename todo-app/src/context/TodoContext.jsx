@@ -52,7 +52,7 @@ export function TodoProvider({ children }) {
   }
 
   async function toggleTodo(id) {
-    const todo = todos.find((t) => t.id === id);
+    const todo = todos.find((t) => t._id === id);
     if (!todo) return;
     try {
       await fetch(`http://localhost:5000/api/todos/${id}`, {
@@ -70,7 +70,7 @@ export function TodoProvider({ children }) {
   }
 
   function startEditing(todo) {
-    setEditingId(todo.id);
+    setEditingId(todo._id);
     setEditText(todo.text);
   }
 
