@@ -1,58 +1,52 @@
-let todos = [];
+import Todo from "../models/Todo.js";
 
-//GET
-export const getTodos = (req, res) => {
+//GET ALL TODOS
+export const getTodos = async (req, res) => {
+  const todos = await Todo.find();
   res.json(todos);
 };
 
-//POST
-export const createTodo = (req, res) => {
+//CREATE
+export const createTodo = async (req, res) => {
   const { text } = req.body;
 
   if (!text) {
     return res.status(400).json({ message: "Text is requierd" });
   }
 
-  const newTodo = {
-    id: Date.now(),
-    text,
-    completed: false,
-  };
-
-  todos.push(newTodo);
+  const newTodo = await Todo.create({ text });
 
   res.status(201).json(newTodo);
 };
 
-//PUT
-export const updateTodo = (req, res) => {
-  const id = Number(req.params.id);
+//UPDATE TODO
+export const updateTodo = async (req, res) => {
+  const id = req.params.id;
   const { text, completed } = req.body;
 
-  todos = todos.map((todo) => {
-    if (todo.id === id) {
-      return {
-        ...todo,
-        text: text ?? todo.text,
-        completed: completed ?? todo.completed,
-      };
-    }
-    return todo;
-  });
-  res.json({ message: "Todo updated" });
+  const updated = await Todo.findByIdAndUpdate(
+    id,
+    {
+      ...(text !== undefined && { text }),
+      ...(completed !== undefined && { completed }),
+    },
+    { new: true },
+  );
+  res.json(updated);
 };
 
-//DELETE
-export const deleteTodo = (req, res) => {
-  const id = Number(req.params.id);
+//DELETE todo
+export const deleteTodo = async (req, res) => {
+  const id = req.params.id;
 
-  todos = todos.filter((todo) => todo.id !== id);
+  await Todo.findByIdAndDelete(id);
 
   res.json({ message: "Todo deleted" });
 };
 
-export const deleteCompletedTodos = (req, res) => {
-  todos = todos.filter((todo) => !todo.completed);
+//DELETE completed todos
+export const deleteCompletedTodos = async (req, res) => {
+  await Todo.deleteMany({ completed: true });
 
   res.json({ message: "Completed todos deleted" });
 };
