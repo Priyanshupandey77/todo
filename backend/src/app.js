@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import todoRoutes from "./routes/todoRoutes.js";
+import errorHandler from "./middleware/errorMiddleware.js";
 
 const app = express();
 
@@ -16,5 +17,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/todos", todoRoutes);
+
+app.use(errorHandler);
 
 export default app;

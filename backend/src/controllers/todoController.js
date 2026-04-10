@@ -1,52 +1,84 @@
+import mongoose from "mongoose";
 import Todo from "../models/Todo.js";
 
 //GET ALL TODOS
-export const getTodos = async (req, res) => {
-  const todos = await Todo.find();
-  res.json(todos);
+export const getTodos = async (req, res, next) => {
+  try {
+    const todos = await Todo.find();
+    res.json(todos);
+  } catch (error) {
+    next(error);
+  }
 };
 
 //CREATE
-export const createTodo = async (req, res) => {
-  const { text } = req.body;
+export const createTodo = async (req, res, next) => {
+  try {
+    const { text } = req.body;
 
-  if (!text) {
-    return res.status(400).json({ message: "Text is requierd" });
+    if (!text) {
+      return res.status(400).json({ message: "Text is requierd" });
+    }
+
+    const newTodo = await Todo.create({ text });
+
+    res.status(201).json(newTodo);
+  } catch (error) {
+    next(error);
   }
-
-  const newTodo = await Todo.create({ text });
-
-  res.status(201).json(newTodo);
 };
 
 //UPDATE TODO
-export const updateTodo = async (req, res) => {
-  const id = req.params.id;
-  const { text, completed } = req.body;
+export const updateTodo = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { text, completed } = req.body;
 
-  const updated = await Todo.findByIdAndUpdate(
-    id,
-    {
-      ...(text !== undefined && { text }),
-      ...(completed !== undefined && { completed }),
-    },
-    { new: true },
-  );
-  res.json(updated);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
+    const updated = await Todo.findByIdAndUpdate(
+      id,
+      {
+        ...(text !== undefined && { text }),
+        ...(completed !== undefined && { completed }),
+      },
+      { new: true },
+    );
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
 };
 
 //DELETE todo
-export const deleteTodo = async (req, res) => {
-  const id = req.params.id;
+export const deleteTodo = async (req, res, next) => {
+  try {
+    const id = req.params.id;
 
-  await Todo.findByIdAndDelete(id);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
 
-  res.json({ message: "Todo deleted" });
+    const deleted = await Todo.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+
+    res.json({ message: "Todo Deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 //DELETE completed todos
-export const deleteCompletedTodos = async (req, res) => {
-  await Todo.deleteMany({ completed: true });
-
-  res.json({ message: "Completed todos deleted" });
+export const deleteCompletedTodos = async (req, res, next) => {
+  try {
+    await Todo.deleteMany({ completed: true });
+    res.json({ message: "Completed todos deleted" });
+  } catch (error) {
+    next(error);
+  }
 };
