@@ -7,8 +7,15 @@ import { useTodos } from "./context/TodoContext";
 export default function App() {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
-  const { filter, setFilter, clearCompleted, activeCount, completedCount } =
-    useTodos();
+  const {
+    filter,
+    setFilter,
+    clearCompleted,
+    activeCount,
+    completedCount,
+    loading,
+    error,
+  } = useTodos();
 
   return (
     <div className={`container ${theme}`}>
@@ -45,6 +52,17 @@ export default function App() {
           <div className="todo-stats__item">Active: {activeCount}</div>
           <div className="todo-stats__item">Completed: {completedCount}</div>
         </div>
+        {loading && (
+          <p style={{ color: "yellow" }}>
+            {" "}
+            <b>Loading...</b>{" "}
+          </p>
+        )}
+        {error && (
+          <p style={{ color: "red" }}>
+            <b>{error}</b>
+          </p>
+        )}
 
         <TodoList />
       </div>

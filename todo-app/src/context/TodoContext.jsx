@@ -8,18 +8,28 @@ export function TodoProvider({ children }) {
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchTodos();
   }, []);
 
   async function fetchTodos() {
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/todos");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch todos");
+      }
+
       const data = await res.json();
       setTodos(data);
     } catch (error) {
-      console.log(error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -33,9 +43,16 @@ export function TodoProvider({ children }) {
         body: JSON.stringify({ text }),
       });
 
-      await fetchTodos();
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message);
+      }
+
+      const newTodo = await res.json();
+
+      setTodos((prev) => [...prev, newTodo]);
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
@@ -45,15 +62,18 @@ export function TodoProvider({ children }) {
         method: "DELETE",
       });
 
-      await fetchTodos();
+      setTodos((prev) => prev.filter((t) => t._id !== id));
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
   async function toggleTodo(id) {
     const todo = todos.find((t) => t._id === id);
-    if (!todo) return;
+    if (!todo) {
+      setLoading(false);
+      return;
+    }
     try {
       await fetch(`http://localhost:5000/api/todos/${id}`, {
         method: "PUT",
@@ -63,9 +83,11 @@ export function TodoProvider({ children }) {
         body: JSON.stringify({ completed: !todo.completed }),
       });
 
-      await fetchTodos();
+      setTodos((prev) =>
+        prev.map((t) => (t._id === id ? { ...t, completed: !t.completed } : t)),
+      );
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
@@ -84,12 +106,14 @@ export function TodoProvider({ children }) {
         body: JSON.stringify({ text: editText }),
       });
 
-      await fetchTodos();
+      setTodos((prev) =>
+        prev.map((t) => (t._id === editingId ? { ...t, text: editText } : t)),
+      );
 
       setEditingId(null);
       setEditText("");
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
@@ -99,9 +123,9 @@ export function TodoProvider({ children }) {
         method: "DELETE",
       });
 
-      await fetchTodos();
+      setTodos((prev) => prev.filter((t) => !t.completed));
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
@@ -127,6 +151,9 @@ export function TodoProvider({ children }) {
     clearCompleted,
     activeCount: todos.filter((t) => !t.completed).length,
     completedCount: todos.filter((t) => t.completed).length,
+
+    loading,
+    error,
   };
 
   return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
