@@ -11,6 +11,7 @@ const app = express();
 app.use(
   cors({
     origin: "https://todo-xi-drab.vercel.app/",
+    credentials: true
   }),
 );
 app.use(express.json());
