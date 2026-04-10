@@ -8,12 +8,19 @@ import errorHandler from "./middleware/errorMiddleware.js";
 const app = express();
 
 // Middleware
+// ✅ CORS FIRST
 app.use(
   cors({
-    origin: "https://todo-xi-drab.vercel.app/",
-    credentials: true
+    origin: "https://todo-xi-drab.vercel.app",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// ✅ Handle preflight requests
+app.options("*", cors());
+
 app.use(express.json());
 
 // Test route
