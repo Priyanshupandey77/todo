@@ -23,7 +23,7 @@ export function TodoProvider({ children }) {
     if (!token) return;
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/todos", {
+      const res = await fetch("https://todo-q4tx.onrender.com/api/todos", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -48,7 +48,7 @@ export function TodoProvider({ children }) {
 
   async function addTodo(text) {
     try {
-      const res = await fetch("http://localhost:5000/api/todos", {
+      const res = await fetch("https://todo-q4tx.onrender.com/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export function TodoProvider({ children }) {
 
   async function deleteTodo(id) {
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
+      await fetch(`https://todo-q4tx.onrender.com/api/todos/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ export function TodoProvider({ children }) {
       return;
     }
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
+      await fetch(`https://todo-q4tx.onrender.com/api/todos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ export function TodoProvider({ children }) {
 
   async function editTodo() {
     try {
-      await fetch(`http://localhost:5000/api/todos/${editingId}`, {
+      await fetch(`https://todo-q4tx.onrender.com/api/todos/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +137,7 @@ export function TodoProvider({ children }) {
 
   async function clearCompleted() {
     try {
-      await fetch("http://localhost:5000/api/todos/completed", {
+      await fetch("https://todo-q4tx.onrender.com/api/todos/completed", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
