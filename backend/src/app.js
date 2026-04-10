@@ -8,7 +8,11 @@ import errorHandler from "./middleware/errorMiddleware.js";
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://todo-xi-drab.vercel.app/",
+  }),
+);
 app.use(express.json());
 
 // Test route
