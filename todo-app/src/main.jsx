@@ -4,13 +4,16 @@ import "./index.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { TodoProvider } from "./context/TodoContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <TodoProvider>
+    <AuthProvider>
       <ThemeProvider>
-        <App />
+        <TodoProvider>
+          <App />
+        </TodoProvider>
       </ThemeProvider>
-    </TodoProvider>
+    </AuthProvider>
   </StrictMode>,
 );

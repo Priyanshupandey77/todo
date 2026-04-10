@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const TodoContext = createContext();
 
@@ -10,15 +11,27 @@ export function TodoProvider({ children }) {
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { token, logout } = useAuth();
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    if (token) {
+      fetchTodos();
+    }
+  }, [token]);
 
   async function fetchTodos() {
+    if (!token) return;
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/todos");
+      const res = await fetch("http://localhost:5000/api/todos", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 401) {
+        logout();
+        return;
+      }
 
       if (!res.ok) {
         throw new Error("Failed to fetch todos");
@@ -39,6 +52,7 @@ export function TodoProvider({ children }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ text }),
       });
@@ -60,6 +74,9 @@ export function TodoProvider({ children }) {
     try {
       await fetch(`http://localhost:5000/api/todos/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setTodos((prev) => prev.filter((t) => t._id !== id));
@@ -71,7 +88,6 @@ export function TodoProvider({ children }) {
   async function toggleTodo(id) {
     const todo = todos.find((t) => t._id === id);
     if (!todo) {
-      setLoading(false);
       return;
     }
     try {
@@ -79,6 +95,7 @@ export function TodoProvider({ children }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ completed: !todo.completed }),
       });
@@ -102,6 +119,7 @@ export function TodoProvider({ children }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ text: editText }),
       });
@@ -121,6 +139,9 @@ export function TodoProvider({ children }) {
     try {
       await fetch("http://localhost:5000/api/todos/completed", {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setTodos((prev) => prev.filter((t) => !t.completed));

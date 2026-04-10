@@ -3,9 +3,12 @@ import TodoList from "./components/TodoList";
 import { useContext } from "react";
 import { ThemeContext } from "./context/ThemeContext";
 import { useTodos } from "./context/TodoContext";
+import { useAuth } from "./context/AuthContext.jsx";
+import Login from "./pages/Login";
 
 export default function App() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { token, logout } = useAuth();
 
   const {
     filter,
@@ -16,6 +19,10 @@ export default function App() {
     loading,
     error,
   } = useTodos();
+
+  if (!token) {
+    return <Login />;
+  }
 
   return (
     <div className={`container ${theme}`}>
@@ -65,6 +72,9 @@ export default function App() {
         )}
 
         <TodoList />
+        <button className="logout-btn" onClick={logout}>
+          Logout
+        </button>
       </div>
     </div>
   );
