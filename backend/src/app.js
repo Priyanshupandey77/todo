@@ -10,7 +10,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://todo-xi-drab.vercel.app",
+  "https://todo-ck21620oa-priyanshu-pandeys-projects-2ff55de8.vercel.app",
 ];
 
 app.use(
