@@ -10,7 +10,8 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://todo-xi-drab.vercel.app",
+    origin: ["http://localhost:5173", "https://todo-xi-drab.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
 );
