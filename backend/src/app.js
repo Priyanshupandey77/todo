@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import todoRoutes from "./routes/todoRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 
 const app = express();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/todos", todoRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use(errorHandler);
 
