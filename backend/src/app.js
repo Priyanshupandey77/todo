@@ -53,20 +53,20 @@ import errorHandler from "./middleware/errorMiddleware.js";
 const app = express();
 
 /**
- * ✅ Allowed origins (IMPORTANT)
- * Add all stable frontend URLs here
+ * ✅ 1. Allowed Origins (stable only)
+ * IMPORTANT: keep ONLY your main frontend URL here
  */
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://todo-xi-drab.vercel.app", // <-- YOUR MAIN VERCEL FRONTEND
+  "https://todo-xi-drab.vercel.app",
 ];
 
 /**
- * ✅ CORS CONFIG
+ * ✅ 2. CORS CONFIG (production safe)
  */
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow tools like Postman or server-to-server requests
+    // allow Postman / server-to-server
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
@@ -76,35 +76,42 @@ const corsOptions = {
     console.log("❌ Blocked CORS request from:", origin);
     return callback(new Error("Not allowed by CORS"));
   },
+
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
-// Apply CORS globally
+/**
+ * ✅ 3. Apply CORS globally
+ */
 app.use(cors(corsOptions));
 
-// Handle preflight requests (IMPORTANT)
-app.options("*", cors(corsOptions));
+/**
+ * ✅ 4. IMPORTANT: Preflight must use SAME config
+ */
+app.options(/.*/, cors(corsOptions));
 
-// Body parser
+/**
+ * ✅ 5. Body parser
+ */
 app.use(express.json());
 
 /**
- * Test route
+ * ✅ 6. Test route
  */
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
 /**
- * API Routes
+ * ✅ 7. Routes
  */
 app.use("/api/todos", todoRoutes);
 app.use("/api/auth", authRoutes);
 
 /**
- * Error handler (must be last)
+ * ✅ 8. Error handler (must be last)
  */
 app.use(errorHandler);
 
