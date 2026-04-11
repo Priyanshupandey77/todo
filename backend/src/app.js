@@ -7,7 +7,6 @@ import errorHandler from "./middleware/errorMiddleware.js";
 
 const app = express();
 
-// ✅ CORS (FINAL WORKING CONFIG)
 const allowedOrigins = [
   "http://localhost:5173",
   "https://todo-xi-drab.vercel.app",
@@ -30,7 +29,6 @@ app.use(
   }),
 );
 
-// ✅ VERY IMPORTANT (handles preflight properly)
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header(
@@ -46,19 +44,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Middleware
 app.use(express.json());
 
-// ✅ Test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// ✅ Routes
 app.use("/api/todos", todoRoutes);
 app.use("/api/auth", authRoutes);
 
-// ✅ Error handler (always last)
 app.use(errorHandler);
 
 export default app;
