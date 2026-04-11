@@ -11,16 +11,19 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://todo-ck21620oa-priyanshu-pandeys-projects-2ff55de8.vercel.app",
+  "https://todo-xi-drab.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      return callback(null, false); 
     },
     credentials: true,
   }),
